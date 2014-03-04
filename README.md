@@ -1,3 +1,5 @@
+fork notes: I really like the look of the output, I just had a different use case for it. I just wanted a nice looking progress bar to monitor batch file processes, and so my example script monitors two folders and the number of files in each one. Specifically, looks at the source folder as the "total" count, and the target directory as the "current" count. Only changes from the original so far are improved Remaining Time estimate count for when you're launching a Pace progress monitor after a batch file process has already started. (This is working). The only other planned change is improved examples, perhaps I'll write an example file that you can pass directory arguments to plug-and-play usage.
+
 Pace
 ====
 
@@ -18,18 +20,21 @@ Example
 Running the following code:
 
 ```js
-var total = 50000,
-    count = 0,
-    pace = require('pace')(total);
+var fs = require('fs');
 
-while (count++ < total) {
-  pace.op();
+var total = fs.readdirSync('/tmp/source').length;
+var count = fs.readdirSync('/tmp/target').length;
+var lastcount = "";
+var pace = require('pace')(total);
 
-  // Cause some work to be done.
-  for (var i = 0; i < 1000000; i++) {
-    count = count;
+while (count < total) {
+  count = fs.readdirSync('/tmp/target').length;
+  if (count != lastcount) {
+        pace.op(count);
+        lastcount = count;
   }
 }
+
 ```
 
 Will cause output to your console similar to:
