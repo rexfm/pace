@@ -46,6 +46,7 @@ function Pace(options) {
 
   // Internal time tracking properties.
   this.started = false;
+  this.start = 0;
   this.size = 50;
   this.inner_time = 0;
   this.outer_time = 0;
@@ -83,7 +84,9 @@ module.exports = function(options) {
  */
 Pace.prototype.op = function op(count) {
   if (count) {
+    if (this.current == 0) this.start = count;
     this.current = count;
+   
   }
   else {
     this.current++;
@@ -130,7 +133,7 @@ Pace.prototype.updateTimes = function updateTimes() {
     this.time_burden = (this.inner_time / (this.inner_time + this.outer_time)) * 100;
 
     // Estimate time left.
-    this.time_left = (this.elapsed / this.current) * (this.total - this.current);
+    this.time_left = (this.elapsed / (this.current - this.start)) * (this.total - this.current);
 
     if (this.time_left < 0) this.time_left = 0;
   }
